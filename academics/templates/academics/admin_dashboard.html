@@ -1,0 +1,25 @@
+{% extends 'academics/base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+    <h2>Admin Dashboard</h2>
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card p-4 text-center">
+                <h3>{{ student_count }}</h3>
+                <p class="text-muted">Students</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 text-center">
+                <h3>{{ course_count }}</h3>
+                <p class="text-muted">Courses</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 text-center">
+                <h3>{{ teacher_count }}</h3>
+                <p class="text-muted">Teachers</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

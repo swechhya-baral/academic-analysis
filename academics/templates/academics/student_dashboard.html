@@ -1,0 +1,13 @@
+{% extends 'academics/base.html' %}
+{% block title %}Student Dashboard{% endblock %}
+{% block content %}
+    <h2>Welcome, {{ student.user.first_name }}</h2>
+    <p class="text-muted">Roll Number: {{ student.roll_number }}</p>
+
+    <h4 class="mt-4">Your Enrollments</h4>
+    <ul class="list-group">
+        {% for enrollment in enrollments %}
+            <li class="list-group-item">{{ enrollment.course.name }} ({{ enrollment.semester }})</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

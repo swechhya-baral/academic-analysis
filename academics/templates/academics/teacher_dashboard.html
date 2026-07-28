@@ -1,0 +1,13 @@
+{% extends 'academics/base.html' %}
+{% block title %}Teacher Dashboard{% endblock %}
+{% block content %}
+    <h2>Welcome, {{ teacher.user.first_name }}</h2>
+    <p class="text-muted">Department: {{ teacher.department }}</p>
+
+    <h4 class="mt-4">Your Courses</h4>
+    <ul class="list-group">
+        {% for course in courses %}
+            <li class="list-group-item">{{ course.code }} - {{ course.name }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
