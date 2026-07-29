@@ -5,9 +5,15 @@
     <p class="text-muted">Department: {{ teacher.department }}</p>
 
     <h4 class="mt-4">Your Courses</h4>
-    <ul class="list-group">
-        {% for course in courses %}
-            <li class="list-group-item">{{ course.code }} - {{ course.name }}</li>
+    <div class="row">
+        {% for data in course_data %}
+        <div class="col-md-6 mb-3">
+            <div class="card p-3">
+                <h5>{{ data.course.code }} - {{ data.course.name }}</h5>
+                <p>Students Enrolled: {{ data.student_count }}</p>
+                <p>Average Score: {{ data.avg_score }}</p>
+            </div>
+        </div>
         {% endfor %}
-    </ul>
+    </div>
 {% endblock %}

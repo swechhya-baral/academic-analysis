@@ -4,10 +4,16 @@
     <h2>Welcome, {{ student.user.first_name }}</h2>
     <p class="text-muted">Roll Number: {{ student.roll_number }}</p>
 
-    <h4 class="mt-4">Your Enrollments</h4>
-    <ul class="list-group">
-        {% for enrollment in enrollments %}
-            <li class="list-group-item">{{ enrollment.course.name }} ({{ enrollment.semester }})</li>
+    <h4 class="mt-4">Your Courses</h4>
+    <div class="row">
+        {% for data in enrollment_data %}
+        <div class="col-md-6 mb-3">
+            <div class="card p-3">
+                <h5>{{ data.course.name }}</h5>
+                <p>Average Score: {{ data.avg_score }}</p>
+                <p>Attendance: {{ data.attendance_pct }}%</p>
+            </div>
+        </div>
         {% endfor %}
-    </ul>
+    </div>
 {% endblock %}
