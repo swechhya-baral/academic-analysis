@@ -21,5 +21,29 @@
                 <p class="text-muted">Teachers</p>
             </div>
         </div>
+
+        <h4 class="mt-5">Student Risk Overview ({{ at_risk_count }} at risk)</h4>
+<table class="table table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Roll Number</th>
+            <th>Avg Score</th>
+            <th>Attendance %</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in risk_data %}
+        <tr class="{% if r.is_at_risk %}table-danger{% endif %}">
+            <td>{{ r.student.user.get_full_name }}</td>
+            <td>{{ r.student.roll_number }}</td>
+            <td>{{ r.avg_score }}</td>
+            <td>{{ r.attendance_pct }}</td>
+            <td>{% if r.is_at_risk %}At Risk{% else %}OK{% endif %}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
     </div>
-{% endblock %}
+{% endblock %}   

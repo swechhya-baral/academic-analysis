@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from .models import Student, Course, Teacher, Enrollment, Grade, Attendance
 from django.db.models import Avg, Count, Q
 
+from .analytics import get_student_risk_data
+
 def home(request):
     if not request.user.is_authenticated:
         student_count = Student.objects.count()
@@ -69,9 +71,14 @@ def teacher_dashboard(request):
 
 @login_required
 def admin_dashboard(request):
+    risk_data = get_student_risk_data()
+    at_risk_count = sum(1 for r in risk_data if r['is_at_risk'])
+
     context = {
         'student_count': Student.objects.count(),
         'course_count': Course.objects.count(),
         'teacher_count': Teacher.objects.count(),
+        'risk_data': risk_data,
+        'at_risk_count': at_risk_count,
     }
     return render(request, 'academics/admin_dashboard.html', context)
