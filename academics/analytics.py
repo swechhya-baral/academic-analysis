@@ -1,10 +1,21 @@
-from django.db.models import Avg, Count, Q, Case, When, FloatField
+import os
+import joblib
+from django.conf import settings
 from .models import Student, Enrollment, Grade, Attendance
+from django.db.models import Avg
 
+MODEL_PATH = os.path.join(settings.BASE_DIR, 'ml', 'risk_model.pkl')
+_model = None
+
+
+def get_model():
+    global _model
+    if _model is None:
+        _model = joblib.load(MODEL_PATH)
+    return _model
 
 def get_student_risk_data():
-    # Returns a list of dicts with each student's average score,attendance % and a computed risk flag.
-    
+    model = get_model()
     students = Student.objects.all()
     results = []
 
@@ -18,8 +29,11 @@ def get_student_risk_data():
         present_att = Attendance.objects.filter(enrollment__in=enrollments, present=True).count()
         attendance_pct = (present_att / total_att * 100) if total_att else 0
 
-        # Simple rule-based risk flag 
-        is_at_risk = avg_score < 60 or attendance_pct < 75
+        avg_score = float(avg_score)
+        attendance_pct = float(attendance_pct)
+
+        prediction = model.predict([[avg_score, attendance_pct]])[0]
+        is_at_risk = bool(prediction)
 
         results.append({
             'student': student,

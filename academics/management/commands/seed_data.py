@@ -29,15 +29,15 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f'Created {len(teachers)} teachers'))
 
         # --- Create Students ---
-        student_names = [
-            ('student1', 'Sita', 'Gurung'),
-            ('student2', 'Bikash', 'Thapa'),
-            ('student3', 'Anjali', 'Rai'),
-            ('student4', 'Suresh', 'Magar'),
-            ('student5', 'Priya', 'Shrestha'),
-        ]
+        first_names = ['Sita', 'Bikash', 'Anjali', 'Suresh', 'Priya', 'Kiran', 'Nabin', 'Sushma', 'Rajan', 'Mina',
+                        'Ashok', 'Dipika', 'Prakash', 'Sunita', 'Bishnu', 'Kamala', 'Ganesh', 'Sabina', 'Hari', 'Radha']
+        last_names = ['Gurung', 'Thapa', 'Rai', 'Magar', 'Shrestha', 'Karki', 'Adhikari', 'Bhandari', 'Poudel', 'Basnet']
+
         students = []
-        for i, (username, first, last) in enumerate(student_names, start=1):
+        for i in range(1, 31):  # 30 students
+            username = f'student{i}'
+            first = random.choice(first_names)
+            last = random.choice(last_names)
             user, _ = User.objects.get_or_create(
                 username=username,
                 defaults={'first_name': first, 'last_name': last, 'email': f'{username}@example.com'}
@@ -84,8 +84,9 @@ class Command(BaseCommand):
         assessment_types = ['Assignment 1', 'Midterm', 'Final']
         grade_count = 0
         for enrollment in enrollments:
+            performance_level = random.uniform(35, 95)  # student's general performance baseline
             for assessment in assessment_types:
-                score = round(random.uniform(40, 100), 2)
+                score = round(max(0, min(100, random.gauss(performance_level, 8))), 2)
                 Grade.objects.get_or_create(
                     enrollment=enrollment,
                     assessment_type=assessment,
@@ -93,14 +94,15 @@ class Command(BaseCommand):
                 )
                 grade_count += 1
         self.stdout.write(self.style.SUCCESS(f'Created {grade_count} grade entries'))
-
-        # --- Create Attendance for each enrollment (10 sessions each) ---
+        
+        # --- Create Attendance for each enrollment ---
         attendance_count = 0
         start_date = date(2026, 8, 1)
         for enrollment in enrollments:
-            for day_offset in range(10):
+            attendance_rate = random.uniform(0.5, 1.0)  # varies per enrollment: 50%-100%
+            for day_offset in range(15):
                 session_date = start_date + timedelta(days=day_offset * 3)
-                present = random.random() > 0.15  # ~85% attendance rate
+                present = random.random() < attendance_rate
                 Attendance.objects.get_or_create(
                     enrollment=enrollment,
                     date=session_date,
