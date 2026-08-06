@@ -1,14 +1,27 @@
 {% extends 'academics/base.html' %}
+{% load widget_tweaks %}
 {% block title %}Login{% endblock %}
 {% block content %}
-    <div class="row justify-content-center">
-        <div class="col-md-4">
-            <h2 class="mb-4">Login</h2>
+<div class="row justify-content-center mt-5">
+    <div class="col-md-4">
+        <div class="card p-4">
+            <h3 class="mb-4 text-center">Login</h3>
             <form method="post">
                 {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-primary">Login</button>
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    {{ form.username|add_class:"form-control" }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    {{ form.password|add_class:"form-control" }}
+                </div>
+                {% if form.errors %}
+                    <p class="text-danger small">Invalid username or password.</p>
+                {% endif %}
+                <button type="submit" class="btn btn-primary w-100 mt-2">Login</button>
             </form>
         </div>
     </div>
+</div>
 {% endblock %}
