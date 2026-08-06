@@ -68,11 +68,17 @@ def teacher_dashboard(request):
     context = {'teacher': teacher, 'course_data': course_data}
     return render(request, 'academics/teacher_dashboard.html', context)
 
+import json
 
 @login_required
 def admin_dashboard(request):
     risk_data = get_student_risk_data()
     at_risk_count = sum(1 for r in risk_data if r['is_at_risk'])
+
+    # Data for charts
+    student_names = [r['student'].user.get_full_name() or r['student'].user.username for r in risk_data]
+    avg_scores = [r['avg_score'] for r in risk_data]
+    attendance_pcts = [r['attendance_pct'] for r in risk_data]
 
     context = {
         'student_count': Student.objects.count(),
@@ -80,5 +86,10 @@ def admin_dashboard(request):
         'teacher_count': Teacher.objects.count(),
         'risk_data': risk_data,
         'at_risk_count': at_risk_count,
+        'student_names': json.dumps(student_names),
+        'avg_scores': json.dumps(avg_scores),
+        'attendance_pcts': json.dumps(attendance_pcts),
+        'risk_labels': json.dumps(['At Risk', 'OK']),
+        'risk_counts': json.dumps([at_risk_count, len(risk_data) - at_risk_count]),
     }
     return render(request, 'academics/admin_dashboard.html', context)

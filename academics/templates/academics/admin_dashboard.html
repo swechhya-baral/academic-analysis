@@ -21,29 +21,71 @@
                 <p class="text-muted">Teachers</p>
             </div>
         </div>
-
-        <h4 class="mt-5">Student Risk Overview ({{ at_risk_count }} at risk)</h4>
-<table class="table table-striped mt-3">
-    <thead>
-        <tr>
-            <th>Student</th>
-            <th>Roll Number</th>
-            <th>Avg Score</th>
-            <th>Attendance %</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for r in risk_data %}
-        <tr class="{% if r.is_at_risk %}table-danger{% endif %}">
-            <td>{{ r.student.user.get_full_name }}</td>
-            <td>{{ r.student.roll_number }}</td>
-            <td>{{ r.avg_score }}</td>
-            <td>{{ r.attendance_pct }}</td>
-            <td>{% if r.is_at_risk %}At Risk{% else %}OK{% endif %}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
     </div>
-{% endblock %}   
+
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <h5>Risk Distribution</h5>
+            <canvas id="riskChart"></canvas>
+        </div>
+        <div class="col-md-6">
+            <h5>Average Scores by Student</h5>
+            <canvas id="scoreChart"></canvas>
+        </div>
+    </div>
+
+    <h4 class="mt-5">Student Risk Overview ({{ at_risk_count }} at risk)</h4>
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Roll Number</th>
+                <th>Avg Score</th>
+                <th>Attendance %</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in risk_data %}
+            <tr class="{% if r.is_at_risk %}table-danger{% endif %}">
+                <td>{{ r.student.user.get_full_name }}</td>
+                <td>{{ r.student.roll_number }}</td>
+                <td>{{ r.avg_score }}</td>
+                <td>{{ r.attendance_pct }}</td>
+                <td>{% if r.is_at_risk %}At Risk{% else %}OK{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Pie chart: risk distribution
+        new Chart(document.getElementById('riskChart'), {
+            type: 'pie',
+            data: {
+                labels: {{ risk_labels|safe }},
+                datasets: [{
+                    data: {{ risk_counts|safe }},
+                    backgroundColor: ['#dc3545', '#198754']
+                }]
+            }
+        });
+
+        // Bar chart: average scores per student
+        new Chart(document.getElementById('scoreChart'), {
+            type: 'bar',
+            data: {
+                labels: {{ student_names|safe }},
+                datasets: [{
+                    label: 'Average Score',
+                    data: {{ avg_scores|safe }},
+                    backgroundColor: '#0d6efd'
+                }]
+            },
+            options: {
+                scales: { y: { beginAtZero: true, max: 100 } }
+            }
+        });
+    </script>
+{% endblock %}
