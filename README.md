@@ -12,29 +12,5 @@ A role-based web platform for tracking student performance and attendance, with 
 ## Tech Stack
 Django, PostgreSQL, scikit-learn/pandas, Bootstrap 5, Chart.js
 
-## Setup
-Clone and setup the environment:
-```
-git clone <repo-url>
-cd academic-analytics
-py -3.12 -m venv venv
-.\venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-```
-
-Create a PostgreSQL database `academic_analytics`, then copy `.env.example` to `.env` and fill in credentials.
-Run the project:
-```
-python manage.py migrate
-python manage.py seed_data
-python manage.py createsuperuser
-python manage.py runserver
-```
-
-Login at `/login/` (seeded: `student1`, `teacher1`, password `password123`) or `/admin/` with your superuser.
-
-## Tests
-python manage.py test
-
 ## Limitations
 Risk labels are rule-based (no real historical dropout data available) — noted as future work.
