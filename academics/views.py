@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Student, Course, Teacher, Enrollment, Grade, Attendance
 from django.db.models import Avg, Count, Q
-
+from .analytics import get_model
 from .analytics import get_student_risk_data
 
 def home(request):
@@ -24,25 +24,36 @@ def home(request):
     else:
         return render(request, 'academics/home.html', {})
 
-
 @login_required
 def student_dashboard(request):
     student = request.user.student
     enrollments = Enrollment.objects.filter(student=student)
+    model = get_model()
 
     enrollment_data = []
     for e in enrollments:
         grades = Grade.objects.filter(enrollment=e)
         avg_score = grades.aggregate(avg=Avg('score'))['avg'] or 0
-        total_sessions = Attendance.objects.filter(enrollment=e).count()
-        present_sessions = Attendance.objects.filter(enrollment=e, present=True).count()
+
+        attendance_records = Attendance.objects.filter(enrollment=e).order_by('date')
+        total_sessions = attendance_records.count()
+        present_sessions = attendance_records.filter(present=True).count()
         attendance_pct = (present_sessions / total_sessions * 100) if total_sessions else 0
+
+        class_avg = Grade.objects.filter(enrollment__course=e.course).aggregate(avg=Avg('score'))['avg'] or 0
+
+        avg_score = float(avg_score)
+        attendance_pct = float(attendance_pct)
+        is_at_risk = bool(model.predict([[avg_score, attendance_pct]])[0])
 
         enrollment_data.append({
             'course': e.course,
             'avg_score': round(avg_score, 2),
+            'class_avg': round(float(class_avg), 2),
             'attendance_pct': round(attendance_pct, 2),
             'grades': grades,
+            'attendance_records': attendance_records,
+            'is_at_risk': is_at_risk,
         })
 
     context = {'student': student, 'enrollment_data': enrollment_data}
@@ -53,16 +64,35 @@ def student_dashboard(request):
 def teacher_dashboard(request):
     teacher = request.user.teacher
     courses = Course.objects.filter(teacher=teacher)
+    model = get_model()
 
     course_data = []
     for c in courses:
         enrollments = Enrollment.objects.filter(course=c)
-        student_count = enrollments.count()
-        avg_score = Grade.objects.filter(enrollment__course=c).aggregate(avg=Avg('score'))['avg'] or 0
+        roster = []
+        for e in enrollments:
+            avg_score = Grade.objects.filter(enrollment=e).aggregate(avg=Avg('score'))['avg'] or 0
+            total_att = Attendance.objects.filter(enrollment=e).count()
+            present_att = Attendance.objects.filter(enrollment=e, present=True).count()
+            attendance_pct = (present_att / total_att * 100) if total_att else 0
+
+            avg_score = float(avg_score)
+            attendance_pct = float(attendance_pct)
+            is_at_risk = bool(model.predict([[avg_score, attendance_pct]])[0])
+
+            roster.append({
+                'student': e.student,
+                'avg_score': round(avg_score, 2),
+                'attendance_pct': round(attendance_pct, 2),
+                'is_at_risk': is_at_risk,
+            })
+
+        course_avg = Grade.objects.filter(enrollment__course=c).aggregate(avg=Avg('score'))['avg'] or 0
         course_data.append({
             'course': c,
-            'student_count': student_count,
-            'avg_score': round(avg_score, 2),
+            'student_count': enrollments.count(),
+            'avg_score': round(float(course_avg), 2),
+            'roster': roster,
         })
 
     context = {'teacher': teacher, 'course_data': course_data}

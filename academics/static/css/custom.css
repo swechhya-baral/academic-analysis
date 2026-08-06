@@ -23,7 +23,7 @@ h1, h2, h3, h4, h5 {
     font-weight: 600;
 }
 
-/* Navbar as a "letterhead" */
+/* Navbar */
 .navbar {
     background-color: var(--color-primary-dark) !important;
     border-bottom: 3px solid var(--color-accent);
@@ -56,7 +56,7 @@ h1, h2, h3, h4, h5 {
     border-color: var(--color-primary-dark);
 }
 
-/* Table — gradebook feel */
+/* Table */
 .table {
     background-color: var(--color-surface);
     font-family: 'Inter', sans-serif;
