@@ -53,7 +53,7 @@ class ViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_login_required_for_dashboard(self):
-        # Not logged in — should redirect to login page
+        # Not logged in — redirect to login page
         response = self.client.get(reverse('student_dashboard'))
         self.assertEqual(response.status_code, 302)  # 302 = redirect
 

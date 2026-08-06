@@ -23,16 +23,24 @@
         </div>
     </div>
 
-    <div class="row mt-5">
-        <div class="col-md-6">
+   <div class="row mt-5 g-4 align-items-stretch">
+    <div class="col-md-5">
+        <div class="card p-4 h-100">
             <h5>Risk Distribution</h5>
-            <canvas id="riskChart"></canvas>
-        </div>
-        <div class="col-md-6">
-            <h5>Average Scores by Student</h5>
-            <canvas id="scoreChart"></canvas>
+            <div style="position: relative; height: 260px;">
+                <canvas id="riskChart"></canvas>
+            </div>
         </div>
     </div>
+    <div class="col-md-7">
+        <div class="card p-4 h-100">
+            <h5>Average Scores by Student</h5>
+            <div style="position: relative; height: 260px;">
+                <canvas id="scoreChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
 
     <h4 class="mt-5">Student Risk Overview ({{ at_risk_count }} at risk)</h4>
     <table class="table table-striped mt-3">
@@ -52,40 +60,64 @@
                 <td>{{ r.student.roll_number }}</td>
                 <td>{{ r.avg_score }}</td>
                 <td>{{ r.attendance_pct }}</td>
-                <td>{% if r.is_at_risk %}At Risk{% else %}OK{% endif %}</td>
+                <td>
+    {% if r.is_at_risk %}
+        <span class="status-pill at-risk">At Risk</span>
+    {% else %}
+        <span class="status-pill on-track">On Track</span>
+    {% endif %}
+</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // Pie chart: risk distribution
-        new Chart(document.getElementById('riskChart'), {
-            type: 'pie',
-            data: {
-                labels: {{ risk_labels|safe }},
-                datasets: [{
-                    data: {{ risk_counts|safe }},
-                    backgroundColor: ['#dc3545', '#198754']
-                }]
-            }
-        });
+<script>
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.color = '#6B7280';
 
-        // Bar chart: average scores per student
-        new Chart(document.getElementById('scoreChart'), {
-            type: 'bar',
-            data: {
-                labels: {{ student_names|safe }},
-                datasets: [{
-                    label: 'Average Score',
-                    data: {{ avg_scores|safe }},
-                    backgroundColor: '#0d6efd'
-                }]
+    new Chart(document.getElementById('riskChart'), {
+        type: 'doughnut',
+        data: {
+            labels: {{ risk_labels|safe }},
+            datasets: [{
+                data: {{ risk_counts|safe }},
+                backgroundColor: ['#B3452C', '#3F6B4B'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom' }
             },
-            options: {
-                scales: { y: { beginAtZero: true, max: 100 } }
+            cutout: '65%'
+        }
+    });
+
+    new Chart(document.getElementById('scoreChart'), {
+        type: 'bar',
+        data: {
+            labels: {{ student_names|safe }},
+            datasets: [{
+                label: 'Average Score',
+                data: {{ avg_scores|safe }},
+                backgroundColor: '#2A4B7C',
+                borderRadius: 3,
+                maxBarThickness: 28
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, max: 100, grid: { color: '#E4E1D8' } },
+                x: { grid: { display: false } }
+            },
+            plugins: {
+                legend: { display: false }
             }
-        });
-    </script>
+        }
+    });
+</script>
 {% endblock %}

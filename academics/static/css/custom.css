@@ -1,0 +1,110 @@
+:root {
+    --color-bg: #FAF9F6;
+    --color-surface: #FFFFFF;
+    --color-ink: #1B2430;
+    --color-primary: #2A4B7C;
+    --color-primary-dark: #1B2430;
+    --color-accent: #C08A2E;
+    --color-danger: #B3452C;
+    --color-success: #3F6B4B;
+    --color-muted: #6B7280;
+    --color-border: #E4E1D8;
+}
+
+body {
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: 'Inter', sans-serif;
+}
+
+h1, h2, h3, h4, h5 {
+    font-family: 'Fraunces', serif;
+    color: var(--color-ink);
+    font-weight: 600;
+}
+
+/* Navbar as a "letterhead" */
+.navbar {
+    background-color: var(--color-primary-dark) !important;
+    border-bottom: 3px solid var(--color-accent);
+}
+.navbar-brand {
+    font-family: 'Fraunces', serif;
+    letter-spacing: 0.03em;
+    font-weight: 600;
+}
+
+/* Cards */
+.card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-top: 3px solid var(--color-accent);
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.card h3, .card h5 {
+    font-family: 'IBM Plex Mono', monospace;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+.btn-primary:hover {
+    background-color: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+}
+
+/* Table — gradebook feel */
+.table {
+    background-color: var(--color-surface);
+    font-family: 'Inter', sans-serif;
+}
+.table thead {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-muted);
+    border-bottom: 2px solid var(--color-ink);
+}
+.table td {
+    font-family: 'IBM Plex Mono', monospace;
+    vertical-align: middle;
+}
+.table-danger {
+    --bs-table-bg: #F7E9E4 !important;
+}
+
+/* Status pill ("stamp" style) */
+.status-pill {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 3px;
+    border: 1.5px solid currentColor;
+    font-weight: 600;
+}
+.status-pill.at-risk {
+    color: var(--color-danger);
+}
+.status-pill.on-track {
+    color: var(--color-success);
+}
+
+/* Forms */
+.form-control, .form-select {
+    border-color: var(--color-border);
+}
+.form-control:focus, .form-select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 0.2rem rgba(42, 75, 124, 0.15);
+}
+
+a {
+    color: var(--color-primary);
+}
