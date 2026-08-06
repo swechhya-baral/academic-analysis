@@ -93,3 +93,34 @@ def admin_dashboard(request):
         'risk_counts': json.dumps([at_risk_count, len(risk_data) - at_risk_count]),
     }
     return render(request, 'academics/admin_dashboard.html', context)
+
+from .forms import GradeForm, AttendanceForm
+from .models import Enrollment
+
+@login_required
+def add_grade(request):
+    teacher = request.user.teacher
+    if request.method == 'POST':
+        form = GradeForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('teacher_dashboard')
+    else:
+        form = GradeForm()
+    # Restrict enrollment choices to this teacher's courses only
+    form.fields['enrollment'].queryset = Enrollment.objects.filter(course__teacher=teacher)
+    return render(request, 'academics/add_grade.html', {'form': form})
+
+
+@login_required
+def add_attendance(request):
+    teacher = request.user.teacher
+    if request.method == 'POST':
+        form = AttendanceForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('teacher_dashboard')
+    else:
+        form = AttendanceForm()
+    form.fields['enrollment'].queryset = Enrollment.objects.filter(course__teacher=teacher)
+    return render(request, 'academics/add_attendance.html', {'form': form})
