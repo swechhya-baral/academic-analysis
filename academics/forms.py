@@ -1,6 +1,7 @@
 from django import forms
 from .models import Grade, Attendance
 from .models import Student, Teacher, Course, Enrollment
+from django.contrib.auth.models import User
 
 class GradeForm(forms.ModelForm):
     class Meta:
@@ -26,20 +27,18 @@ class AttendanceForm(forms.ModelForm):
 class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
-        fields = ['user', 'roll_number', 'date_of_birth']
+        fields = ['roll_number', 'date_of_birth']
         widgets = {
             'roll_number': forms.TextInput(attrs={'class': 'form-control'}),
             'date_of_birth': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'user': forms.Select(attrs={'class': 'form-select'}),
         }
 
 class TeacherForm(forms.ModelForm):
     class Meta:
         model = Teacher
-        fields = ['user', 'department']
+        fields = ['department']
         widgets = {
             'department': forms.TextInput(attrs={'class': 'form-control'}),
-            'user': forms.Select(attrs={'class': 'form-select'}),
         }
 
 class CourseForm(forms.ModelForm):
@@ -62,3 +61,39 @@ class EnrollmentForm(forms.ModelForm):
             'course': forms.Select(attrs={'class': 'form-select'}),
             'semester': forms.TextInput(attrs={'class': 'form-control'}),
         }
+
+class StudentCreateForm(forms.Form):
+    username = forms.CharField(max_length=150, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    first_name = forms.CharField(max_length=150, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    last_name = forms.CharField(max_length=150, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    email = forms.EmailField(required=False, widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    roll_number = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    date_of_birth = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}))
+
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError("This username is already taken.")
+        return username
+
+    def clean_roll_number(self):
+        roll = self.cleaned_data['roll_number']
+        if Student.objects.filter(roll_number=roll).exists():
+            raise forms.ValidationError("This roll number is already in use.")
+        return roll
+
+
+class TeacherCreateForm(forms.Form):
+    username = forms.CharField(max_length=150, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    first_name = forms.CharField(max_length=150, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    last_name = forms.CharField(max_length=150, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    email = forms.EmailField(required=False, widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    department = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError("This username is already taken.")
+        return username

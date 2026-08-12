@@ -11,8 +11,8 @@ urlpatterns = [
 ]
 
 from .crud_views import (
-    StudentListView, StudentCreateView, StudentUpdateView, StudentDeleteView,
-    TeacherListView, TeacherCreateView, TeacherUpdateView, TeacherDeleteView,
+    StudentListView, StudentUpdateView, StudentDeleteView,
+    TeacherListView, TeacherUpdateView, TeacherDeleteView,
     CourseListView, CourseCreateView, CourseUpdateView, CourseDeleteView,
     EnrollmentListView, EnrollmentCreateView, EnrollmentUpdateView, EnrollmentDeleteView,
     GradeListView, GradeCreateView, GradeUpdateView, GradeDeleteView,
@@ -23,12 +23,12 @@ urlpatterns += [
     path('manage/', views.manage_hub, name='manage_hub'),
 
     path('manage/students/', StudentListView.as_view(), name='manage_students'),
-    path('manage/students/add/', StudentCreateView.as_view(), name='student_add'),
+    path('manage/students/add/', views.add_student, name='student_add'),
     path('manage/students/<int:pk>/edit/', StudentUpdateView.as_view(), name='student_edit'),
     path('manage/students/<int:pk>/delete/', StudentDeleteView.as_view(), name='student_delete'),
 
     path('manage/teachers/', TeacherListView.as_view(), name='manage_teachers'),
-    path('manage/teachers/add/', TeacherCreateView.as_view(), name='teacher_add'),
+    path('manage/teachers/add/', views.add_teacher, name='teacher_add'),
     path('manage/teachers/<int:pk>/edit/', TeacherUpdateView.as_view(), name='teacher_edit'),
     path('manage/teachers/<int:pk>/delete/', TeacherDeleteView.as_view(), name='teacher_delete'),
 

@@ -160,3 +160,58 @@ def manage_hub(request):
     if not request.user.is_superuser:
         return redirect('home')
     return render(request, 'academics/manage/hub.html')
+
+from django.contrib.auth.models import User
+from .forms import StudentCreateForm, TeacherCreateForm
+from functools import wraps
+
+def superuser_required(view_func):
+    @wraps(view_func)
+    @login_required
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return redirect('home')
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+
+@superuser_required
+def add_student(request):
+    if request.method == 'POST':
+        form = StudentCreateForm(request.POST)
+        if form.is_valid():
+            user = User.objects.create_user(
+                username=form.cleaned_data['username'],
+                password=form.cleaned_data['password'],
+                first_name=form.cleaned_data['first_name'],
+                last_name=form.cleaned_data['last_name'],
+                email=form.cleaned_data['email'],
+            )
+            Student.objects.create(
+                user=user,
+                roll_number=form.cleaned_data['roll_number'],
+                date_of_birth=form.cleaned_data['date_of_birth'],
+            )
+            return redirect('manage_students')
+    else:
+        form = StudentCreateForm()
+    return render(request, 'academics/manage/crud_form.html', {'form': form, 'title': 'Add Student'})
+
+
+@superuser_required
+def add_teacher(request):
+    if request.method == 'POST':
+        form = TeacherCreateForm(request.POST)
+        if form.is_valid():
+            user = User.objects.create_user(
+                username=form.cleaned_data['username'],
+                password=form.cleaned_data['password'],
+                first_name=form.cleaned_data['first_name'],
+                last_name=form.cleaned_data['last_name'],
+                email=form.cleaned_data['email'],
+            )
+            Teacher.objects.create(user=user, department=form.cleaned_data['department'])
+            return redirect('manage_teachers')
+    else:
+        form = TeacherCreateForm()
+    return render(request, 'academics/manage/crud_form.html', {'form': form, 'title': 'Add Teacher'})
