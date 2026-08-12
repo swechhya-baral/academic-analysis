@@ -12,7 +12,7 @@
         <tr>
             <td>{{ s.user.get_full_name }}</td>
             <td>{{ s.roll_number }}</td>
-            <td>{{ s.date_of_birth }}</td>
+            <td>{{ s.date_of_birth|date:"M j, Y" }}</td>
             <td>
                 <a href="{% url 'student_edit' s.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
                 <a href="{% url 'student_delete' s.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
@@ -21,5 +21,5 @@
         {% endfor %}
     </tbody>
 </table>
-<a href="{% url 'manage_hub' %}" class="btn btn-link">← Back to Manage Hub</a>
+<a href="{% url 'manage_hub' %}" class="btn btn-link">Back to Manage Hub</a>
 {% endblock %}

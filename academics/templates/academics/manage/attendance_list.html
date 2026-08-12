@@ -11,7 +11,7 @@
         {% for a in objects %}
         <tr>
             <td>{{ a.enrollment }}</td>
-            <td>{{ a.date }}</td>
+            <td>{{ a.date|date:"M j, Y" }}</td>
             <td>{{ a.present }}</td>
             <td>
                 <a href="{% url 'attendance_edit' a.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
