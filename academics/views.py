@@ -154,3 +154,9 @@ def add_attendance(request):
         form = AttendanceForm()
     form.fields['enrollment'].queryset = Enrollment.objects.filter(course__teacher=teacher)
     return render(request, 'academics/add_attendance.html', {'form': form})
+
+@login_required
+def manage_hub(request):
+    if not request.user.is_superuser:
+        return redirect('home')
+    return render(request, 'academics/manage/hub.html')
